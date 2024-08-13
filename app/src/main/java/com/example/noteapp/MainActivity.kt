@@ -4,10 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.noteapp.screen.NoteScreen
 import com.example.noteapp.screen.NoteViewModel
@@ -24,7 +24,8 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val noteViewModel: NoteViewModel by viewModels()
+//                    val noteViewModel: NoteViewModel by viewModels() //also works
+                    val noteViewModel = viewModel<NoteViewModel>()
                     NoteApp(noteViewModel)
                 }
             }
@@ -34,10 +35,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NoteApp(noteViewModel: NoteViewModel = viewModel()) {
-    val notesList = noteViewModel.getAllNotes()
+    val notesList = noteViewModel.noteList.collectAsState().value
     NoteScreen(
         notes = notesList,
-        onAddNote = noteViewModel::addNote,
+        onAddNote = {
+            noteViewModel.addNote(it)
+        },
         onRemoveNote = noteViewModel::removeNote
     )
 }

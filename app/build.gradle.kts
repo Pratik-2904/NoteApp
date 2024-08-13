@@ -1,8 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     id("com.google.devtools.ksp") version "2.0.0-1.0.23"
     id("com.google.dagger.hilt.android")
+    id("dagger.hilt.android.plugin")
 
 }
 
@@ -51,6 +53,12 @@ android {
         }
     }
 }
+composeCompiler {
+    enableStrongSkippingMode = true
+
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
+}
 
 dependencies {
 
@@ -60,6 +68,11 @@ dependencies {
     //room
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
+
+    //coroutines
+//    implementation(libs.kotlinx.coroutines.android)
+//    implementation("org.jetbrains.kotlin:kotlinx-coroutines-core:1.0.2")
+//      implementation("org.jetbrains.kotlin:kotlinx-coroutines-play-services-core:1.6.4")
 
     // To use Kotlin Symbol Processing (KSP)
     ksp(libs.androidx.room.compiler)
